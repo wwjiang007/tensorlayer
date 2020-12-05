@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf
-import tensorlayer as tl
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.training import moving_averages
+
+import tensorlayer as tl
 from tensorlayer import logging
 from tensorlayer.layers.core import Layer
 
@@ -47,12 +48,12 @@ class LocalResponseNorm(Layer):
     """
 
     def __init__(
-            self,
-            depth_radius=None,
-            bias=None,
-            alpha=None,
-            beta=None,
-            name=None,  #'lrn',
+        self,
+        depth_radius=None,
+        bias=None,
+        alpha=None,
+        beta=None,
+        name=None,  #'lrn',
     ):
         # super(LocalResponseNorm, self).__init__(prev_layer=prev_layer, name=name)
         super().__init__(name)
@@ -91,7 +92,7 @@ def _bias_scale(x, b, data_format):
     if data_format == 'NHWC':
         return x * b
     elif data_format == 'NCHW':
-        return x * _to_channel_first_bias(b)
+        return x * b
     else:
         raise ValueError('invalid data_format: %s' % data_format)
 
@@ -101,9 +102,17 @@ def _bias_add(x, b, data_format):
     if data_format == 'NHWC':
         return tf.add(x, b)
     elif data_format == 'NCHW':
-        return tf.add(x, _to_channel_first_bias(b))
+        return tf.add(x, b)
     else:
         raise ValueError('invalid data_format: %s' % data_format)
+
+
+def _compute_shape(tensors):
+    if isinstance(tensors, list):
+        shape_mem = [t.get_shape().as_list() for t in tensors]
+    else:
+        shape_mem = tensors.get_shape().as_list()
+    return shape_mem
 
 
 def batch_normalization(x, mean, variance, offset, scale, variance_epsilon, data_format, name=None):
@@ -194,18 +203,18 @@ class BatchNorm(Layer):
     """
 
     def __init__(
-            self,
-            decay=0.9,
-            epsilon=0.00001,
-            act=None,
-            is_train=False,
-            beta_init=tl.initializers.zeros(),
-            gamma_init=tl.initializers.random_normal(mean=1.0, stddev=0.002),
-            moving_mean_init=tl.initializers.zeros(),
-            moving_var_init=tl.initializers.zeros(),
-            num_features=None,
-            data_format='channels_last',
-            name=None,
+        self,
+        decay=0.9,
+        epsilon=0.00001,
+        act=None,
+        is_train=False,
+        beta_init=tl.initializers.zeros(),
+        gamma_init=tl.initializers.random_normal(mean=1.0, stddev=0.002),
+        moving_mean_init=tl.initializers.zeros(),
+        moving_var_init=tl.initializers.zeros(),
+        num_features=None,
+        data_format='channels_last',
+        name=None,
     ):
         super(BatchNorm, self).__init__(name=name, act=act)
         self.decay = decay
@@ -217,7 +226,6 @@ class BatchNorm(Layer):
         self.moving_var_init = moving_var_init
         self.num_features = num_features
 
-        self.channel_axis = -1 if data_format == 'channels_last' else 1
         self.axes = None
 
         if num_features is not None:
@@ -255,7 +263,8 @@ class BatchNorm(Layer):
         return params_shape
 
     def _check_input_shape(self, inputs):
-        if inputs.ndim <= 1:
+        inputs_shape = _compute_shape(inputs)
+        if len(inputs_shape) <= 1:
             raise ValueError('expected input at least 2D, but got {}D input'.format(inputs.ndim))
 
     def build(self, inputs_shape):
@@ -278,6 +287,7 @@ class BatchNorm(Layer):
     def forward(self, inputs):
         self._check_input_shape(inputs)
 
+        self.channel_axis = len(inputs.shape) - 1 if self.data_format == 'channels_last' else 1
         if self.axes is None:
             self.axes = [i for i in range(len(inputs.shape)) if i != self.channel_axis]
 
@@ -317,7 +327,8 @@ class BatchNorm1d(BatchNorm):
     """
 
     def _check_input_shape(self, inputs):
-        if inputs.ndim != 2 and inputs.ndim != 3:
+        inputs_shape = _compute_shape(inputs)
+        if len(inputs_shape) != 2 and len(inputs_shape) != 3:
             raise ValueError('expected input to be 2D or 3D, but got {}D input'.format(inputs.ndim))
 
 
@@ -340,7 +351,8 @@ class BatchNorm2d(BatchNorm):
     """
 
     def _check_input_shape(self, inputs):
-        if inputs.ndim != 4:
+        inputs_shape = _compute_shape(inputs)
+        if len(inputs_shape) != 4:
             raise ValueError('expected input to be 4D, but got {}D input'.format(inputs.ndim))
 
 
@@ -363,7 +375,8 @@ class BatchNorm3d(BatchNorm):
     """
 
     def _check_input_shape(self, inputs):
-        if inputs.ndim != 5:
+        inputs_shape = _compute_shape(inputs)
+        if len(inputs_shape) != 5:
             raise ValueError('expected input to be 5D, but got {}D input'.format(inputs.ndim))
 
 
@@ -410,9 +423,9 @@ class InstanceNorm(Layer):
     """
 
     def __init__(
-            self, act=None, epsilon=0.00001, beta_init=tl.initializers.zeros(),
-            gamma_init=tl.initializers.random_normal(mean=1.0, stddev=0.002), num_features=None,
-            data_format='channels_last', name=None
+        self, act=None, epsilon=0.00001, beta_init=tl.initializers.zeros(),
+        gamma_init=tl.initializers.random_normal(mean=1.0, stddev=0.002), num_features=None,
+        data_format='channels_last', name=None
     ):
         super(InstanceNorm, self).__init__(name=name, act=act)
         self.epsilon = epsilon
@@ -605,21 +618,21 @@ class LayerNorm(Layer):
     """
 
     def __init__(
-            self,  #prev_layer,
-            center=True,
-            scale=True,
-            act=None,
-            # reuse=None,
-            # variables_collections=None,
-            # outputs_collections=None,
-            # trainable=True,
-            epsilon=1e-12,
-            begin_norm_axis=1,
-            begin_params_axis=-1,
-            beta_init=tl.initializers.zeros(),
-            gamma_init=tl.initializers.ones(),
-            data_format='channels_last',
-            name=None,
+        self,  #prev_layer,
+        center=True,
+        scale=True,
+        act=None,
+        # reuse=None,
+        # variables_collections=None,
+        # outputs_collections=None,
+        # trainable=True,
+        epsilon=1e-12,
+        begin_norm_axis=1,
+        begin_params_axis=-1,
+        beta_init=tl.initializers.zeros(),
+        gamma_init=tl.initializers.ones(),
+        data_format='channels_last',
+        name=None,
     ):
 
         # super(LayerNorm, self).__init__(prev_layer=prev_layer, act=act, name=name)
@@ -804,17 +817,17 @@ class SwitchNorm(Layer):
     """
 
     def __init__(
-            self,
-            act=None,
-            epsilon=1e-5,
-            beta_init=tl.initializers.constant(0.0),
-            gamma_init=tl.initializers.constant(1.0),
-            moving_mean_init=tl.initializers.zeros(),
-            # beta_init=tf.compat.v1.initializers.constant(0.0),
-            # gamma_init=tf.compat.v1.initializers.constant(1.0),
-            # moving_mean_init=tf.compat.v1.initializers.zeros(),
-            data_format='channels_last',
-            name=None,  #'switchnorm',
+        self,
+        act=None,
+        epsilon=1e-5,
+        beta_init=tl.initializers.constant(0.0),
+        gamma_init=tl.initializers.constant(1.0),
+        moving_mean_init=tl.initializers.zeros(),
+        # beta_init=tf.compat.v1.initializers.constant(0.0),
+        # gamma_init=tf.compat.v1.initializers.constant(1.0),
+        # moving_mean_init=tf.compat.v1.initializers.zeros(),
+        data_format='channels_last',
+        name=None,  #'switchnorm',
     ):
         # super(SwitchNorm, self).__init__(prev_layer=prev_layer, act=act, name=name)
         super().__init__(name, act=act)

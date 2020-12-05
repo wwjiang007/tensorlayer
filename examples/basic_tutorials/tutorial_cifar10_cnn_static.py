@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
-import numpy as np
 import multiprocessing
+import time
+
+import numpy as np
 import tensorflow as tf
+
 import tensorlayer as tl
 from tensorlayer.layers import (BatchNorm, Conv2d, Dense, Flatten, Input, LocalResponseNorm, MaxPool2d)
 from tensorlayer.models import Model
@@ -122,7 +124,7 @@ def _map_fn_train(img, target):
 
 def _map_fn_test(img, target):
     # 1. Crop the central [height, width] of the image.
-    img = tf.image.resize_with_crop_or_pad(img, 24, 24)
+    img = tf.image.resize_with_pad(img, 24, 24)
     # 2. Subtract off the mean and divide by the variance of the pixels.
     img = tf.image.per_image_standardization(img)
     img = tf.reshape(img, (24, 24, 3))
@@ -153,24 +155,16 @@ test_ds = test_ds.batch(batch_size)
 
 for epoch in range(n_epoch):
     start_time = time.time()
-
     train_loss, train_acc, n_iter = 0, 0, 0
     for X_batch, y_batch in train_ds:
         net.train()
-
         with tf.GradientTape() as tape:
             # compute outputs
             _logits = net(X_batch)
             # compute loss and update model
-            _loss_ce = tl.cost.cross_entropy(_logits, y_batch, name='train_loss')
-            _loss_L2 = 0
-            # for p in tl.layers.get_variables_with_name('relu/W', True, True):
-            #      _loss_L2 += tl.cost.lo_regularizer(1.0)(p)
-            _loss = _loss_ce + _loss_L2
-
+            _loss = tl.cost.cross_entropy(_logits, y_batch, name='train_loss')
         grad = tape.gradient(_loss, train_weights)
         optimizer.apply_gradients(zip(grad, train_weights))
-
         train_loss += _loss
         train_acc += np.mean(np.equal(np.argmax(_logits, 1), y_batch))
         n_iter += 1

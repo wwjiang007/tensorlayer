@@ -8,12 +8,13 @@ Ph.D. Postition @ PKU
 =============================================================
 
 
-Hi, I am Hao Dong, a new faculty member in EECS, Peking University. I now have a few Ph.D. positions per year open for international students who would like to study AI. If you or your friends are interested in it, please contact me ASAP.
-PKU is a top 30 university in the global ranking. The application is competitive, apply early is recommended. For the application of next year, please note that the DDL of Chinese Government Scholarship is in the end of each year, please check this `link <http://www.isd.pku.edu.cn/info/1503/5676.htm>`__ for more details.
+Hi, I am `Hao Dong <https://zsdonghao.github.io/>`__, the founder of this project and a new faculty member in EECS, Peking University. I now have a few Ph.D. positions per year open for international students who would like to study AI. If you or your friends are interested in it, feel free to contact me.
+PKU is a top 30 university in the global ranking. The application is competitive, apply early is recommended. Please check the following links for more details.
 
-My homepage: https://zsdonghao.github.io 
+- `About the International Elite Ph.D. Program in Computer Science <https://cs.pku.edu.cn/info/1115/2233.htm>`__
+- `My homepage <https://zsdonghao.github.io/>`__
 
-Contact: hao.dong[AT]pku.edu.cn
+Contact: hao.dong [AT] pku.edu.cn
 
 
 
@@ -61,7 +62,7 @@ and other ways to
 , or feel free to
 `contact us <https://www.imperial.ac.uk/data-science/get-involved/contact-us/>`__.
 
-Software Engineering@SurgicalAI.cn
+Software Engineer @ SurgicalAI.cn
 =============================================================
 SurgicalAI is a startup founded by the data scientists and surgical robot experts from Imperial College. Our objective is AI democratise Surgery. By combining 5G, AI and Cloud Computing, SurgicalAI is building a platform enable junor surgeons to perfom complex procedures. As one of the most impactful startup, SurgicalAI is supported by Nvidia, AWS and top surgeons around the world.
 

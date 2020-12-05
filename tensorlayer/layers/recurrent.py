@@ -3,11 +3,11 @@
 
 import numpy as np
 import tensorflow as tf
+
 import tensorlayer as tl
 from tensorlayer import logging
 from tensorlayer.decorators import deprecated_alias
 from tensorlayer.layers.core import Layer
-import warnings
 
 # TODO: uncomment
 __all__ = [
@@ -138,13 +138,13 @@ class RNN(Layer):
     """
 
     def __init__(
-            self,
-            cell,
-            return_last_output=False,
-            return_seq_2d=False,
-            return_last_state=True,
-            in_channels=None,
-            name=None,  # 'rnn'
+        self,
+        cell,
+        return_last_output=False,
+        return_seq_2d=False,
+        return_last_state=True,
+        in_channels=None,
+        name=None,  # 'rnn'
     ):
 
         super(RNN, self).__init__(name=name)
@@ -247,7 +247,9 @@ class RNN(Layer):
                         "but got an actual length of a sequence %d" % i
                     )
 
-            sequence_length = [i - 1 if i >= 1 else 0 for i in sequence_length]
+        sequence_length = tl.layers.retrieve_seq_length_op3(inputs)
+
+        sequence_length = [i - 1 if i >= 1 else 0 for i in sequence_length]
 
         # set warning
         # if (not self.return_last_output) and sequence_length is not None:
@@ -388,14 +390,14 @@ class SimpleRNN(RNN):
     """
 
     def __init__(
-            self,
-            units,
-            return_last_output=False,
-            return_seq_2d=False,
-            return_last_state=True,
-            in_channels=None,
-            name=None,  # 'simplernn'
-            **kwargs
+        self,
+        units,
+        return_last_output=False,
+        return_seq_2d=False,
+        return_last_state=True,
+        in_channels=None,
+        name=None,  # 'simplernn'
+        **kwargs
     ):
         super(SimpleRNN, self).__init__(
             cell=tf.keras.layers.SimpleRNNCell(units=units, **kwargs), return_last_output=return_last_output,
@@ -466,14 +468,14 @@ class GRURNN(RNN):
     """
 
     def __init__(
-            self,
-            units,
-            return_last_output=False,
-            return_seq_2d=False,
-            return_last_state=True,
-            in_channels=None,
-            name=None,  # 'grurnn'
-            **kwargs
+        self,
+        units,
+        return_last_output=False,
+        return_seq_2d=False,
+        return_last_state=True,
+        in_channels=None,
+        name=None,  # 'grurnn'
+        **kwargs
     ):
         super(GRURNN, self).__init__(
             cell=tf.keras.layers.GRUCell(units=units, **kwargs), return_last_output=return_last_output,
@@ -544,14 +546,14 @@ class LSTMRNN(RNN):
     """
 
     def __init__(
-            self,
-            units,
-            return_last_output=False,
-            return_seq_2d=False,
-            return_last_state=True,
-            in_channels=None,
-            name=None,  # 'lstmrnn'
-            **kwargs
+        self,
+        units,
+        return_last_output=False,
+        return_seq_2d=False,
+        return_last_state=True,
+        in_channels=None,
+        name=None,  # 'lstmrnn'
+        **kwargs
     ):
         super(LSTMRNN, self).__init__(
             cell=tf.keras.layers.LSTMCell(units=units, **kwargs), return_last_output=return_last_output,
@@ -632,13 +634,13 @@ class BiRNN(Layer):
     """
 
     def __init__(
-            self,
-            fw_cell,
-            bw_cell,
-            return_seq_2d=False,
-            return_last_state=False,
-            in_channels=None,
-            name=None,  # 'birnn'
+        self,
+        fw_cell,
+        bw_cell,
+        return_seq_2d=False,
+        return_last_state=False,
+        in_channels=None,
+        name=None,  # 'birnn'
     ):
         super(BiRNN, self).__init__(name)
 

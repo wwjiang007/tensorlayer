@@ -5,6 +5,7 @@ import inspect
 from abc import abstractmethod
 
 import tensorflow as tf
+
 import tensorlayer as tl
 from tensorlayer import logging
 from tensorlayer.decorators import (deprecated_alias, private_method, protected_method)
@@ -386,15 +387,11 @@ class Layer(object):
 
                 # change function (e.g. act) into dictionary of module path and function name
                 if inspect.isfunction(val):
-                    if ("__module__" in dir(val)) and (len(val.__module__) >
-                                                       10) and (val.__module__[0:10] == "tensorflow"):
+                    if ("__module__" in dir(val)) and (len(val.__module__) > 10) and (val.__module__[0:10]
+                                                                                      == "tensorflow"):
                         params[arg] = val.__name__
                     else:
                         params[arg] = ('is_Func', utils.func2str(val))
-                    # if val.__name__ == "<lambda>":
-                    #     params[arg] = utils.lambda2str(val)
-                    # else:
-                    #     params[arg] = {"module_path": val.__module__, "func_name": val.__name__}
                 # ignore more args e.g. TL initializer
                 elif arg.endswith('init'):
                     continue

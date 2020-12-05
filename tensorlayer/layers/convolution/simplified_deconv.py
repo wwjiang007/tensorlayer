@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-
 import tensorflow as tf
+
 import tensorlayer as tl
 from tensorlayer import logging
 from tensorlayer.decorators import deprecated_alias
@@ -58,18 +58,18 @@ class DeConv2d(Layer):
     """
 
     def __init__(
-            self,
-            n_filter=32,
-            filter_size=(3, 3),
-            strides=(2, 2),
-            act=None,
-            padding='SAME',
-            dilation_rate=(1, 1),
-            data_format='channels_last',
-            W_init=tl.initializers.truncated_normal(stddev=0.02),
-            b_init=tl.initializers.constant(value=0.0),
-            in_channels=None,
-            name=None  # 'decnn2d'
+        self,
+        n_filter=32,
+        filter_size=(3, 3),
+        strides=(2, 2),
+        act=None,
+        padding='SAME',
+        dilation_rate=(1, 1),
+        data_format='channels_last',
+        W_init=tl.initializers.truncated_normal(stddev=0.02),
+        b_init=tl.initializers.constant(value=0.0),
+        in_channels=None,
+        name=None  # 'decnn2d'
     ):
         super().__init__(name, act=act)
         self.n_filter = n_filter
@@ -82,10 +82,10 @@ class DeConv2d(Layer):
         self.b_init = b_init
         self.in_channels = in_channels
 
-        # Attention: To build, we need not only the in_channels!
-        # if self.in_channels:
-        #     self.build(None)
-        #     self._built = True
+        # Attention: To build, we need not only the in_channels! Solved.
+        if self.in_channels is not None:
+            self.build(None)
+            self._built = True
 
         logging.info(
             "DeConv2d {}: n_filters: {} strides: {} padding: {} act: {} dilation: {}".format(
@@ -132,10 +132,13 @@ class DeConv2d(Layer):
             # dtype=tf.float32,
             name=self.name,
         )
-        if self.data_format == "channels_first":
-            self.in_channels = inputs_shape[1]
+        if inputs_shape is not None:
+            self.in_channels = inputs_shape[1 if self.data_format == "channels_first" else -1]
+        elif self.in_channels is not None:
+            inputs_shape = [1, self.in_channels, 1, 1
+                           ] if self.data_format == "channels_first" else [1, 1, 1, self.in_channels]
         else:
-            self.in_channels = inputs_shape[-1]
+            raise ValueError("Either inputs_shape or in_channels must be specified for build.")
         _out = self.layer(
             tf.convert_to_tensor(np.random.uniform(size=inputs_shape), dtype=np.float32)
         )  #np.random.uniform([1] + list(inputs_shape)))  # initialize weights
@@ -186,17 +189,17 @@ class DeConv3d(Layer):
     """
 
     def __init__(
-            self,
-            n_filter=32,
-            filter_size=(3, 3, 3),
-            strides=(2, 2, 2),
-            padding='SAME',
-            act=None,
-            data_format='channels_last',
-            W_init=tl.initializers.truncated_normal(stddev=0.02),
-            b_init=tl.initializers.constant(value=0.0),
-            in_channels=None,
-            name=None  # 'decnn3d'
+        self,
+        n_filter=32,
+        filter_size=(3, 3, 3),
+        strides=(2, 2, 2),
+        padding='SAME',
+        act=None,
+        data_format='channels_last',
+        W_init=tl.initializers.truncated_normal(stddev=0.02),
+        b_init=tl.initializers.constant(value=0.0),
+        in_channels=None,
+        name=None  # 'decnn3d'
     ):
         super().__init__(name, act=act)
         self.n_filter = n_filter
@@ -206,12 +209,12 @@ class DeConv3d(Layer):
         self.data_format = data_format
         self.W_init = W_init
         self.b_init = b_init
-        self.in_channels = in_channels,
+        self.in_channels = in_channels
 
-        # Attention: To build, we need not only the in_channels!
-        # if self.in_channels:
-        #     self.build(None)
-        #     self._built = True
+        # Attention: To build, we need not only the in_channels! Solved.
+        if self.in_channels is not None:
+            self.build(None)
+            self._built = True
 
         logging.info(
             "DeConv3d %s: n_filters: %s strides: %s pad: %s act: %s" % (
@@ -252,16 +255,17 @@ class DeConv3d(Layer):
             bias_initializer=self.b_init,
             name=self.name,
         )
-        if self.data_format == "channels_first":
-            self.in_channels = inputs_shape[1]
+        if inputs_shape is not None:
+            self.in_channels = inputs_shape[1 if self.data_format == "channels_first" else -1]
+        elif self.in_channels is not None:
+            inputs_shape = [1, self.in_channels, 1, 1, 1
+                           ] if self.data_format == "channels_first" else [1, 1, 1, 1, self.in_channels]
         else:
-            self.in_channels = inputs_shape[-1]
-
+            raise ValueError("Either inputs_shape or in_channels must be specified for build.")
         _out = self.layer(
             tf.convert_to_tensor(np.random.uniform(size=inputs_shape), dtype=np.float32)
         )  #self.layer(np.random.uniform([1] + list(inputs_shape)))  # initialize weights
         outputs_shape = _out.shape
-        # self._add_weights(self.layer.weights)
         self._trainable_weights = self.layer.weights
 
     def forward(self, inputs):

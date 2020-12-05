@@ -21,11 +21,18 @@ h, w, _ = image.shape
 
 def create_transformation_matrix():
     # 1. Create required affine transformation matrices
-    M_rotate = tl.prepro.affine_rotation_matrix(angle=20)
-    M_flip = tl.prepro.affine_horizontal_flip_matrix(prob=1)
-    M_shift = tl.prepro.affine_shift_matrix(wrg=0.1, hrg=0, h=h, w=w)
-    M_shear = tl.prepro.affine_shear_matrix(x_shear=0.2, y_shear=0)
-    M_zoom = tl.prepro.affine_zoom_matrix(zoom_range=0.8)
+    ## fixed
+    # M_rotate = tl.prepro.affine_rotation_matrix(angle=20)
+    # M_flip = tl.prepro.affine_horizontal_flip_matrix(prob=1)
+    # M_shift = tl.prepro.affine_shift_matrix(wrg=0.1, hrg=0, h=h, w=w)
+    # M_shear = tl.prepro.affine_shear_matrix(x_shear=0.2, y_shear=0)
+    # M_zoom = tl.prepro.affine_zoom_matrix(zoom_range=0.8)
+    ## random
+    M_rotate = tl.prepro.affine_rotation_matrix(angle=(-20, 20))
+    M_flip = tl.prepro.affine_horizontal_flip_matrix(prob=0.5)
+    M_shift = tl.prepro.affine_shift_matrix(wrg=(-0.1,0.1), hrg=(-0.1,0.1), h=h, w=w)
+    M_shear = tl.prepro.affine_shear_matrix(x_shear=(-0.2,0.2), y_shear=(-0.2,0.2))
+    M_zoom = tl.prepro.affine_zoom_matrix(zoom_range=(0.8,1.2))
 
     # 2. Combine matrices
     # NOTE: operations are applied in a reversed order (i.e., rotation is performed first)
@@ -55,7 +62,8 @@ def example2():
     st = time.time()
     for _ in range(100):  # Repeat 100 times and compute the averaged speed
         transform_matrix = create_transformation_matrix()
-        result = tl.prepro.affine_transform_cv2(image, transform_matrix)  # Transform the image using a single operation
+        result = tl.prepro.affine_transform_cv2(image, transform_matrix, border_mode='replicate')  # Transform the image using a single operation
+        tl.vis.save_image(result, '_result_fast_{}.png'.format(_))
     print("apply all transforms once took %fs for each image" % ((time.time() - st) / 100))  # usually 50x faster
     tl.vis.save_image(result, '_result_fast.png')
 
