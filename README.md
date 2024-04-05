@@ -21,16 +21,17 @@
 <!---  [![Documentation Status](https://readthedocs.org/projects/tensorlayercn/badge/)](https://tensorlayercn.readthedocs.io/)
 <!---  [![PyUP Updates](https://pyup.io/repos/github/tensorlayer/tensorlayer/shield.svg)](https://pyup.io/repos/github/tensorlayer/tensorlayer/) --->
 
+# Please click [TensorLayerX](https://github.com/tensorlayer/tensorlayerx) 🔥🔥🔥
+
 [TensorLayer](https://tensorlayer.readthedocs.io) is a novel TensorFlow-based deep learning and reinforcement learning library designed for researchers and engineers. It provides an extensive collection of customizable neural layers to build advanced AI models quickly, based on this, the community open-sourced mass [tutorials](https://github.com/tensorlayer/tensorlayer/blob/master/examples/reinforcement_learning/README.md) and [applications](https://github.com/tensorlayer). TensorLayer is awarded the 2017 Best Open Source Software by the [ACM Multimedia Society](https://twitter.com/ImperialDSI/status/923928895325442049). 
-This project can also be found at [iHub](https://code.ihub.org.cn/projects/328) and [Gitee](https://gitee.com/organizations/TensorLayer).
+This project can also be found at [OpenI](https://git.openi.org.cn/TensorLayer/tensorlayer3.0) and [Gitee](https://gitee.com/organizations/TensorLayer).
 
 # News
 
-🔥 **3.0.0 will supports multiple backends, such as TensorFlow, MindSpore and more, allowing users to run the code on different hardware like Nvidia-GPU and Huawei-Ascend. We need more people to join the dev team, if you are interested, please email hao.dong@pku.edu.cn**
-
-🔥 Reinforcement Learning Zoo: [Low-level APIs](https://github.com/tensorlayer/tensorlayer/tree/master/examples/reinforcement_learning) for professional usage, [High-level APIs](https://github.com/tensorlayer/RLzoo) for simple usage, and a corresponding [Springer textbook](http://springer.com/gp/book/9789811540943)
-
-🔥 [Sipeed Maxi-EMC](https://github.com/sipeed/Maix-EMC): Run TensorLayer models on the **low-cost AI chip** (e.g., K210) (Alpha Version)
+- 🔥 [TensorLayerX](https://github.com/tensorlayer/tensorlayerx) is a Unified Deep Learning and Reinforcement Learning Framework for All Hardwares, Backends and OS. The current version supports TensorFlow, Pytorch, MindSpore, PaddlePaddle, OneFlow and Jittor as the backends, allowing users to run the code on different hardware like Nvidia-GPU and Huawei-Ascend.
+- TensorLayer is now in [OpenI](https://git.openi.org.cn/TensorLayer/tensorlayer3.0)
+- Reinforcement Learning Zoo: [Low-level APIs](https://github.com/tensorlayer/tensorlayer/tree/master/examples/reinforcement_learning) for professional usage, [High-level APIs](https://github.com/tensorlayer/RLzoo) for simple usage, and a corresponding [Springer textbook](http://springer.com/gp/book/9789811540943)
+- [Sipeed Maxi-EMC](https://github.com/sipeed/Maix-EMC): Run TensorLayer models on the **low-cost AI chip** (e.g., K210) (Alpha Version)
 
 <!-- 🔥 [NNoM](https://github.com/majianjia/nnom): Run TensorLayer quantized models on the **MCU** (e.g., STM32) (Coming Soon) -->
 
@@ -169,7 +170,7 @@ We suggest users to report bugs using Github issues. Users can also discuss how 
 
 # Citing TensorLayer
 
-If you find TensorLayer useful for your project, please cite the following paper：
+If you find TensorLayer useful for your project, please cite the following papers：
 
 ```
 @article{tensorlayer2017,
@@ -178,5 +179,14 @@ If you find TensorLayer useful for your project, please cite the following paper
     title   = {{TensorLayer: A Versatile Library for Efficient Deep Learning Development}},
     url     = {http://tensorlayer.org},
     year    = {2017}
+}
+
+@inproceedings{tensorlayer2021,
+  title={Tensorlayer 3.0: A Deep Learning Library Compatible With Multiple Backends},
+  author={Lai, Cheng and Han, Jiarong and Dong, Hao},
+  booktitle={2021 IEEE International Conference on Multimedia \& Expo Workshops (ICMEW)},
+  pages={1--3},
+  year={2021},
+  organization={IEEE}
 }
 ```
